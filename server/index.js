@@ -27,6 +27,10 @@ app.get("/ping", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+app.get('/health', (req, res) => {
+  return res.json({ health: "GOOD" })
+})
+
 const server = app.listen(process.env.PORT, () =>
   console.log(`Server started on ${process.env.PORT}`)
 );
