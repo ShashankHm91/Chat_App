@@ -1,16 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Logout from "./Logout";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 const VITE_LOCALHOST_KEY = import.meta.env.VITE_LOCALHOST_KEY; // Use Vite's environment variables
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat, socket }) {
+export default function ChatContainer({ currentChat, socket, back }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  const go_back = () => {
+    back(); // Call the back function passed as a prop
+  };
+
+
+
 
   const messageData = async () => {
     const data = await JSON.parse(
@@ -79,17 +88,19 @@ export default function ChatContainer({ currentChat, socket }) {
     <Container>
       <div className="chat-header">
         <div className="user-details">
+          <div className="go-back" onClick={go_back}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
           <div className="avatar">
             <img
               src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt=""
+              alt="avatar"
             />
           </div>
           <div className="username">
             <h3>{currentChat.username}</h3>
           </div>
         </div>
-        {/* <Logout /> */}
       </div>
       <div className="chat-messages">
         {messages.map((message) => {
@@ -126,12 +137,18 @@ const Container = styled.div`
     align-items: center;
     padding: 0 2rem;
     .user-details {
+      .go-back {
+        color: #ffff;
+        cursor: pointer;
+        font-size: 1.5rem; 
+        margin-right: 1rem;
+      }
       display: flex;
       align-items: center;
       gap: 1rem;
       .avatar {
         img {
-          height: 3rem;
+          height: 1.2rem;
         }
       }
       .username {
@@ -159,7 +176,7 @@ const Container = styled.div`
       display: flex;
       align-items: center;
       .content {
-        max-width: 40%;
+        max-width: 100%;
         overflow-wrap: break-word;
         padding: 1rem;
         font-size: 1.1rem;
@@ -173,14 +190,17 @@ const Container = styled.div`
     .sended {
       justify-content: flex-end;
       .content {
-        background-color: #4f04ff21;
+        background-color: #073708; /* Sender's message (green) */
+        color: #fff;
       }
     }
     .recieved {
       justify-content: flex-start;
       .content {
-        background-color: #9900ff20;
+        background-color: #03233c; /* Receiver's message (blue) */
+        color: #fff;
       }
     }
   }
 `;
+
