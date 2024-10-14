@@ -60,19 +60,20 @@ export default function Chat() {
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   };
-  
+
   return (
     <Container>
       <div className="container">
-      <LogoutContainer>
-        <Logout />
-      </LogoutContainer>
-        <Contacts contacts={contacts} changeChat={handleChatChange} />
+        <LogoutContainer>
+          <Logout />
+        </LogoutContainer>
+        {/* <Contacts contacts={contacts} changeChat={handleChatChange} /> */}
         {currentChat === undefined ? (
-          <Welcome />
+          <Contacts contacts={contacts} changeChat={handleChatChange} />
         ) : (
-          <ChatContainer currentChat={currentChat} socket={socket} />
+          <ChatContainer currentChat={currentChat} socket={socket} back={() => setCurrentChat(undefined)} />
         )}
+
       </div>
     </Container>
   );
@@ -94,7 +95,7 @@ const Container = styled.div`
     width: 85vw;
     background-color: #00000076;
     display: grid;
-    grid-template-columns: 25% 75%;
+    /* grid-template-columns: 25% 75%; */
     
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
