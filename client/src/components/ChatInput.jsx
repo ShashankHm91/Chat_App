@@ -7,6 +7,7 @@ import Picker from "emoji-picker-react";
 export default function ChatInput({ handleSendMsg }) {
   const [msg, setMsg] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
@@ -36,7 +37,7 @@ export default function ChatInput({ handleSendMsg }) {
       <form className="input-container" onSubmit={(event) => sendChat(event)}>
         <input
           type="text"
-          placeholder="type your message here"
+          placeholder="Type your message here"
           onChange={(e) => setMsg(e.target.value)}
           value={msg}
         />
@@ -49,33 +50,37 @@ export default function ChatInput({ handleSendMsg }) {
 }
 
 const Container = styled.div`
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 5% 95%;
   background-color: #080420;
-  padding: 0 2rem;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
+  padding: 0 1.5rem;
+  gap: 1rem;
+
+  @media screen and (max-width: 768px) {
     padding: 0 1rem;
-    gap: 1rem;
+    gap: 0.5rem;
   }
+
   .button-container {
     display: flex;
     align-items: center;
     color: white;
-    gap: 1rem;
     .emoji {
       position: relative;
       svg {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         color: #ffff00c8;
         cursor: pointer;
       }
+
       .emoji-picker-react {
         position: absolute;
         top: -350px;
         background-color: #080420;
         box-shadow: 0 5px 10px #9a86f3;
         border-color: #9a86f3;
+        z-index: 1000;
+
         .emoji-scroll-wrapper::-webkit-scrollbar {
           background-color: #080420;
           width: 5px;
@@ -83,63 +88,82 @@ const Container = styled.div`
             background-color: #9a86f3;
           }
         }
-        .emoji-categories {
-          button {
-            filter: contrast(0);
-          }
+
+        .emoji-categories button {
+          filter: contrast(0);
         }
+
         .emoji-search {
           background-color: transparent;
           border-color: #9a86f3;
         }
+
         .emoji-group:before {
           background-color: #080420;
         }
       }
     }
   }
+
   .input-container {
-    width: 100%;
-    border-radius: 2rem;
+    flex-grow: 1;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     background-color: #ffffff34;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+
     input {
-      width: 90%;
-      height: 60%;
+      flex-grow: 1;
       background-color: transparent;
       color: white;
       border: none;
-      padding-left: 1rem;
       font-size: 1.2rem;
+      padding-left: 1rem;
 
       &::selection {
         background-color: #9a86f3;
       }
+
       &:focus {
         outline: none;
       }
+
+      @media screen and (max-width: 768px) {
+        font-size: 1rem;
+        padding-left: 0.5rem;
+      }
     }
+
     button {
-      width: 4rem;
-      /* padding: 0.3rem 2rem; */
-      border-radius: 2rem;
+      background-color: #9a86f3;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #9a86f3;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
 
-      border: none;
-      @media screen and (min-width: 720px) and (max-width: 1080px) {
-        padding: 0.2rem 1rem;
-        svg {
-          font-size: 1rem;
-        }
-      }
       svg {
-        font-size: 2rem;
+        font-size: 1.8rem;
         color: white;
+      }
+
+      &:hover {
+        background-color: #7a67e3;
+      }
+
+      @media screen and (max-width: 768px) {
+        width: 40px;
+        height: 40px;
+
+        svg {
+          font-size: 1.5rem;
+        }
       }
     }
   }
