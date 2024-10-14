@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { IoArrowBack } from "react-icons/io5";
 import Logout from "./Logout";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -89,7 +88,7 @@ export default function ChatContainer({ currentChat, socket, back }) {
       <div className="chat-header">
         <div className="user-details">
           <div className="go-back" onClick={go_back}>
-            <FontAwesomeIcon icon={faArrowLeft} />
+            <IoArrowBack size={24} color="white" /> {/* React Icon */}
           </div>
           <div className="avatar">
             <img
@@ -138,10 +137,12 @@ const Container = styled.div`
     padding: 0 2rem;
     .user-details {
       .go-back {
-        color: #ffff;
+        color: #fff;
         cursor: pointer;
         font-size: 1.5rem; 
         margin-right: 1rem;
+        display: flex;
+        align-items: center;
       }
       display: flex;
       align-items: center;
