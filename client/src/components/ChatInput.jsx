@@ -119,7 +119,7 @@ const Container = styled.div`
       background-color: transparent;
       color: white;
       border: none;
-      font-size: 1.2rem;
+      font-size: 1.5rem; 
       padding-left: 1rem;
 
       &::selection {
@@ -131,7 +131,7 @@ const Container = styled.div`
       }
 
       @media screen and (max-width: 768px) {
-        font-size: 1rem;
+        font-size: 1.4rem; /* Adjusted for smaller screens */
         padding-left: 0.5rem;
       }
     }
