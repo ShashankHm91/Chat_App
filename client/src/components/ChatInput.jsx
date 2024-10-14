@@ -119,7 +119,7 @@ const Container = styled.div`
       background-color: transparent;
       color: white;
       border: none;
-      font-size: 1.5rem; 
+      font-size: 1.2rem;
       padding-left: 1rem;
 
       &::selection {
@@ -131,7 +131,7 @@ const Container = styled.div`
       }
 
       @media screen and (max-width: 768px) {
-        font-size: 1.4rem; /* Adjusted for smaller screens */
+        font-size: 1rem;
         padding-left: 0.5rem;
       }
     }
@@ -140,30 +140,22 @@ const Container = styled.div`
       background-color: #9a86f3;
       border: none;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 0.5rem;
       cursor: pointer;
-      transition: background-color 0.3s ease;
 
       svg {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         color: white;
       }
 
-      &:hover {
-        background-color: #7a67e3;
-      }
-
       @media screen and (max-width: 768px) {
-        width: 40px;
-        height: 40px;
-
         svg {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
         }
+        padding: 0.3rem;
       }
     }
   }
