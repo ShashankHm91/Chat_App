@@ -10,27 +10,25 @@ import Welcome from "../components/Welcome";
 import Logout from "../components/Logout";
 const VITE_LOCALHOST_KEY = import.meta.env.VITE_LOCALHOST_KEY; // Use Vite's environment variables
 
-
 export default function Chat() {
-
   const navigate = useNavigate();
   const socket = useRef();
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
 
+  // Fetch user data from local storage and redirect to login if not available
   const userData = async () => {
     if (!localStorage.getItem(VITE_LOCALHOST_KEY)) {
       navigate("/login");
     } else {
       setCurrentUser(
-        await JSON.parse(
-          localStorage.getItem(VITE_LOCALHOST_KEY)
-        )
+        await JSON.parse(localStorage.getItem(VITE_LOCALHOST_KEY))
       );
     }
-  }
+  };
 
+  // Fetch contacts only if the user's avatar is set
   const avatarData = async () => {
     if (currentUser) {
       if (currentUser.isAvatarImageSet) {
@@ -40,23 +38,27 @@ export default function Chat() {
         navigate("/setAvatar");
       }
     }
-  }
+  };
 
+  // Load user data on component mount
   useEffect(() => {
-    userData()
+    userData();
   }, []);
 
+  // Initialize socket connection only when currentUser is available
   useEffect(() => {
-    if (currentUser) {
+    if (!socket.current && currentUser) {
       socket.current = io(host);
       socket.current.emit("add-user", currentUser._id);
     }
   }, [currentUser]);
 
+  // Load contacts data if currentUser is available
   useEffect(() => {
-    avatarData()
+    avatarData();
   }, [currentUser]);
 
+  // Handle chat change (switch between chats)
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   };
@@ -67,18 +69,23 @@ export default function Chat() {
         <LogoutContainer>
           <Logout />
         </LogoutContainer>
-        {/* <Contacts contacts={contacts} changeChat={handleChatChange} /> */}
+
+        {/* If no chat is selected, show Contacts; otherwise, show ChatContainer */}
         {currentChat === undefined ? (
           <Contacts contacts={contacts} changeChat={handleChatChange} />
         ) : (
-          <ChatContainer currentChat={currentChat} socket={socket} back={() => setCurrentChat(undefined)} />
+          <ChatContainer
+            currentChat={currentChat}
+            socket={socket}
+            back={() => setCurrentChat(undefined)}
+          />
         )}
-
       </div>
     </Container>
   );
 }
 
+// Styled Components
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
@@ -95,8 +102,6 @@ const Container = styled.div`
     width: 85vw;
     background-color: #00000076;
     display: grid;
-    /* grid-template-columns: 25% 75%; */
-    
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }
@@ -107,5 +112,5 @@ const LogoutContainer = styled.div`
   position: absolute;
   top: 1rem;
   right: 4rem;
-
 `;
+
