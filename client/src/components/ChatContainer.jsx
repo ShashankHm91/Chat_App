@@ -47,33 +47,38 @@ export default function ChatContainer({ currentChat, socket, back }) {
     getCurrentChat();
   }, [currentChat]);
 
+
   const handleSendMsg = async (msg) => {
-    const data = await JSON.parse(
-      localStorage.getItem(VITE_LOCALHOST_KEY)
-    );
+    const data = await JSON.parse(localStorage.getItem(VITE_LOCALHOST_KEY));
+
+    // Emit message to socket immediately
     socket.current.emit("send-msg", {
       to: currentChat._id,
       from: data._id,
       msg,
     });
+
+    // Update UI immediately
+    const msgs = [...messages];
+    msgs.push({ fromSelf: true, message: msg });
+    setMessages(msgs);
+
+    // Send message to backend (this happens in parallel to UI update)
     await axios.post(sendMessageRoute, {
       from: data._id,
       to: currentChat._id,
       message: msg,
     });
-
-    const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
-    setMessages(msgs);
   };
 
+  // Ensure that incoming messages are listened for as soon as the socket is available
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
         setArrivalMessage({ fromSelf: false, message: msg });
       });
     }
-  }, []);
+  }, [socket.current]);
 
   useEffect(() => {
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
