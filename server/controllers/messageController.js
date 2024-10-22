@@ -37,3 +37,16 @@ module.exports.addMessage = async (req, res, next) => {
     next(ex);
   }
 };
+
+
+
+// Delete one
+module.exports.deleteAllMessages = async (req, res, next) => {
+  try {
+    // Delete all messages from the Messages collection
+    await Messages.deleteMany({});
+    res.json({ msg: "All messages deleted successfully." });
+  } catch (ex) {
+    next(ex); // Pass the error to the error-handling middleware
+  }
+};
