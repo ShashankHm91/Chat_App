@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  lastSeen: { // New field for last seen timestamp
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Users", userSchema);

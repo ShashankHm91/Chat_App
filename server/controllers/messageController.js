@@ -14,6 +14,7 @@ module.exports.getMessages = async (req, res, next) => {
       return {
         fromSelf: msg.sender.toString() === from,
         message: msg.message.text,
+        createdAt: msg.createdAt, // Include the createdAt timestamp
       };
     });
     res.json(projectedMessages);
@@ -21,6 +22,7 @@ module.exports.getMessages = async (req, res, next) => {
     next(ex);
   }
 };
+
 
 module.exports.addMessage = async (req, res, next) => {
   try {
