@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import { IoArrowBack } from "react-icons/io5";
-import Logout from "./Logout";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+
 const VITE_LOCALHOST_KEY = import.meta.env.VITE_LOCALHOST_KEY; // Use Vite's environment variables
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 
@@ -17,36 +17,18 @@ export default function ChatContainer({ currentChat, socket, back }) {
     back(); // Call the back function passed as a prop
   };
 
-
-
-
   const messageData = async () => {
-    const data = await JSON.parse(
-      localStorage.getItem(VITE_LOCALHOST_KEY)
-    );
+    const data = await JSON.parse(localStorage.getItem(VITE_LOCALHOST_KEY));
     const response = await axios.post(recieveMessageRoute, {
       from: data._id,
       to: currentChat._id,
     });
     setMessages(response.data);
-  }
-
-
-  useEffect(() => {
-    messageData()
-  }, [currentChat]);
-
-  const getCurrentChat = async () => {
-    if (currentChat) {
-      await JSON.parse(
-        localStorage.getItem(VITE_LOCALHOST_KEY)
-      )._id;
-    }
   };
-  useEffect(() => {
-    getCurrentChat();
-  }, [currentChat]);
 
+  useEffect(() => {
+    messageData();
+  }, [currentChat]);
 
   const handleSendMsg = async (msg) => {
     const data = await JSON.parse(localStorage.getItem(VITE_LOCALHOST_KEY));
@@ -59,8 +41,9 @@ export default function ChatContainer({ currentChat, socket, back }) {
     });
 
     // Update UI immediately
+    const timestamp = new Date(); // Set the current timestamp
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
+    msgs.push({ fromSelf: true, message: msg, createdAt: timestamp }); // Include createdAt
     setMessages(msgs);
 
     // Send message to backend (this happens in parallel to UI update)
@@ -71,17 +54,19 @@ export default function ChatContainer({ currentChat, socket, back }) {
     });
   };
 
-  // Ensure that incoming messages are listened for as soon as the socket is available
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
-        setArrivalMessage({ fromSelf: false, message: msg });
+        const receivedTimestamp = new Date(); // Set the current timestamp for received messages
+        setArrivalMessage({ fromSelf: false, message: msg.message, createdAt: receivedTimestamp }); // Include createdAt
       });
     }
   }, [socket.current]);
 
   useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+    if (arrivalMessage) {
+      setMessages((prev) => [...prev, arrivalMessage]);
+    }
   }, [arrivalMessage]);
 
   useEffect(() => {
@@ -93,13 +78,10 @@ export default function ChatContainer({ currentChat, socket, back }) {
       <div className="chat-header">
         <div className="user-details">
           <div className="go-back" onClick={go_back}>
-            <IoArrowBack size={24} color="white" /> {/* React Icon */}
+            <IoArrowBack size={24} color="white" />
           </div>
           <div className="avatar">
-            <img
-              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt="avatar"
-            />
+            <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="avatar" />
           </div>
           <div className="username">
             <h3>{currentChat.username}</h3>
@@ -108,20 +90,23 @@ export default function ChatContainer({ currentChat, socket, back }) {
       </div>
       <div className="chat-messages">
         {messages.map((message) => {
+          const timestamp = message.createdAt
+            ? new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : 'Unknown Time';
+
           return (
             <div ref={scrollRef} key={uuidv4()}>
-              <div
-                className={`message ${message.fromSelf ? "sended" : "recieved"
-                  }`}
-              >
-                <div className="content ">
+              <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                <div className="content">
                   <p>{message.message}</p>
+                  <small className='timestamp' >{timestamp}</small> {/* Display the timestamp */}
                 </div>
               </div>
             </div>
           );
         })}
       </div>
+
       <ChatInput handleSendMsg={handleSendMsg} />
     </Container>
   );
@@ -188,6 +173,11 @@ const Container = styled.div`
         font-size: 1.1rem;
         border-radius: 1rem;
         color: #d1d1d1;
+
+        .timestamp{
+          color: #a3a3a3bc;
+          font-size: 0.8rem;
+      }
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
@@ -209,4 +199,3 @@ const Container = styled.div`
     }
   }
 `;
-
